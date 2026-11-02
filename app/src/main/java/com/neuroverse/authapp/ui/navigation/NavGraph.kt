@@ -14,6 +14,8 @@ import com.neuroverse.authapp.ui.home.HomeScreen
 import com.neuroverse.authapp.ui.home.HomeViewModel
 import com.neuroverse.authapp.ui.login.LoginScreen
 import com.neuroverse.authapp.ui.login.LoginViewModel
+import com.neuroverse.authapp.ui.profile.ProfileScreen
+import com.neuroverse.authapp.ui.profile.ProfileViewModel
 import com.neuroverse.authapp.ui.register.RegisterScreen
 import com.neuroverse.authapp.ui.register.RegisterViewModel
 import com.neuroverse.authapp.ui.screens.StubScreen
@@ -101,9 +103,19 @@ fun AppNavGraph() {
             )
         }
         composable(Routes.PROFILE) {
-            StubScreen(
-                title = "Profile",
-                actions = listOf("Back" to { navController.popBackStack() })
+            val viewModel: ProfileViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer { ProfileViewModel(AppContainer.authRepository) }
+                }
+            )
+            ProfileScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onLoggedOut = {
+                    navController.navigate(Routes.WELCOME) {
+                        popUpTo(Routes.WELCOME) { inclusive = true }
+                    }
+                }
             )
         }
     }
