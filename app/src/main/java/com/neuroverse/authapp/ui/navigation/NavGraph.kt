@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.neuroverse.authapp.AppContainer
+import com.neuroverse.authapp.ui.forgot.ForgotPasswordScreen
+import com.neuroverse.authapp.ui.forgot.ForgotPasswordViewModel
 import com.neuroverse.authapp.ui.login.LoginScreen
 import com.neuroverse.authapp.ui.login.LoginViewModel
 import com.neuroverse.authapp.ui.register.RegisterScreen
@@ -70,9 +72,14 @@ fun AppNavGraph() {
             )
         }
         composable(Routes.FORGOT_PASSWORD) {
-            StubScreen(
-                title = "Forgot Password",
-                actions = listOf("Back" to { navController.popBackStack() })
+            val viewModel: ForgotPasswordViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer { ForgotPasswordViewModel(AppContainer.authRepository) }
+                }
+            )
+            ForgotPasswordScreen(
+                viewModel = viewModel,
+                onBackToLogin = { navController.popBackStack() }
             )
         }
         composable(Routes.HOME) {
