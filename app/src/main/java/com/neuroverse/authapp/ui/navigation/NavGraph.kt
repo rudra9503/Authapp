@@ -1,9 +1,15 @@
 package com.neuroverse.authapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.neuroverse.authapp.AppContainer
+import com.neuroverse.authapp.ui.register.RegisterScreen
+import com.neuroverse.authapp.ui.register.RegisterViewModel
 import com.neuroverse.authapp.ui.screens.StubScreen
 
 @Composable
@@ -21,9 +27,19 @@ fun AppNavGraph() {
             )
         }
         composable(Routes.REGISTER) {
-            StubScreen(
-                title = "Register",
-                actions = listOf("Go to Login" to { navController.navigate(Routes.LOGIN) })
+            val viewModel: RegisterViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer { RegisterViewModel(AppContainer.authRepository) }
+                }
+            )
+            RegisterScreen(
+                viewModel = viewModel,
+                onRegistered = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.WELCOME) { inclusive = true }
+                    }
+                },
+                onGoToLogin = { navController.navigate(Routes.LOGIN) }
             )
         }
         composable(Routes.LOGIN) {
