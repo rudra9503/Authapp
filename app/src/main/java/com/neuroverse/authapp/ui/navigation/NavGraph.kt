@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.neuroverse.authapp.AppContainer
+import com.neuroverse.authapp.ui.login.LoginScreen
+import com.neuroverse.authapp.ui.login.LoginViewModel
 import com.neuroverse.authapp.ui.register.RegisterScreen
 import com.neuroverse.authapp.ui.register.RegisterViewModel
 import com.neuroverse.authapp.ui.screens.StubScreen
@@ -39,20 +41,32 @@ fun AppNavGraph() {
                         popUpTo(Routes.WELCOME) { inclusive = true }
                     }
                 },
-                onGoToLogin = { navController.navigate(Routes.LOGIN) }
+                onGoToLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.WELCOME)
+                    }
+                }
             )
         }
         composable(Routes.LOGIN) {
-            StubScreen(
-                title = "Login",
-                actions = listOf(
-                    "Forgot password" to { navController.navigate(Routes.FORGOT_PASSWORD) },
-                    "Home (temporary)" to {
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(Routes.WELCOME) { inclusive = true }
-                        }
+            val viewModel: LoginViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer { LoginViewModel(AppContainer.authRepository) }
+                }
+            )
+            LoginScreen(
+                viewModel = viewModel,
+                onLoggedIn = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.WELCOME) { inclusive = true }
                     }
-                )
+                },
+                onForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) },
+                onGoToRegister = {
+                    navController.navigate(Routes.REGISTER) {
+                        popUpTo(Routes.WELCOME)
+                    }
+                }
             )
         }
         composable(Routes.FORGOT_PASSWORD) {
