@@ -18,7 +18,7 @@ import com.neuroverse.authapp.ui.profile.ProfileScreen
 import com.neuroverse.authapp.ui.profile.ProfileViewModel
 import com.neuroverse.authapp.ui.register.RegisterScreen
 import com.neuroverse.authapp.ui.register.RegisterViewModel
-import com.neuroverse.authapp.ui.screens.StubScreen
+import com.neuroverse.authapp.ui.welcome.WelcomeScreen
 
 @Composable
 fun AppNavGraph() {
@@ -26,12 +26,9 @@ fun AppNavGraph() {
 
     NavHost(navController = navController, startDestination = Routes.WELCOME) {
         composable(Routes.WELCOME) {
-            StubScreen(
-                title = "Welcome",
-                actions = listOf(
-                    "Register" to { navController.navigate(Routes.REGISTER) },
-                    "Login" to { navController.navigate(Routes.LOGIN) }
-                )
+            WelcomeScreen(
+                onRegister = { navController.navigate(Routes.REGISTER) },
+                onLogin = { navController.navigate(Routes.LOGIN) }
             )
         }
         composable(Routes.REGISTER) {
