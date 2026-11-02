@@ -23,3 +23,6 @@ local.properties
 
 # IDE settings
 .idea/
+
+# Firebase config (supplied per environment, see README)
+app/google-services.json
