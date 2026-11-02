@@ -1,6 +1,11 @@
 package com.neuroverse.authapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -23,8 +28,17 @@ import com.neuroverse.authapp.ui.welcome.WelcomeScreen
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
+    var startDestination by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(Unit) {
+        startDestination = if (AppContainer.authRepository.currentUser() != null) {
+            Routes.HOME
+        } else {
+            Routes.WELCOME
+        }
+    }
+    val start = startDestination ?: return
 
-    NavHost(navController = navController, startDestination = Routes.WELCOME) {
+    NavHost(navController = navController, startDestination = start) {
         composable(Routes.WELCOME) {
             WelcomeScreen(
                 onRegister = { navController.navigate(Routes.REGISTER) },
@@ -41,7 +55,7 @@ fun AppNavGraph() {
                 viewModel = viewModel,
                 onRegistered = {
                     navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.WELCOME) { inclusive = true }
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 },
                 onGoToLogin = {
@@ -61,7 +75,7 @@ fun AppNavGraph() {
                 viewModel = viewModel,
                 onLoggedIn = {
                     navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.WELCOME) { inclusive = true }
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 },
                 onForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) },
@@ -93,8 +107,8 @@ fun AppNavGraph() {
                 viewModel = viewModel,
                 onOpenProfile = { navController.navigate(Routes.PROFILE) },
                 onLoggedOut = {
-                    navController.navigate(Routes.WELCOME) {
-                        popUpTo(Routes.HOME) { inclusive = true }
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 }
             )
@@ -109,8 +123,8 @@ fun AppNavGraph() {
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
                 onLoggedOut = {
-                    navController.navigate(Routes.WELCOME) {
-                        popUpTo(Routes.WELCOME) { inclusive = true }
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 }
             )
