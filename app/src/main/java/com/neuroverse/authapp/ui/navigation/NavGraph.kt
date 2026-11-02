@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import com.neuroverse.authapp.AppContainer
 import com.neuroverse.authapp.ui.forgot.ForgotPasswordScreen
 import com.neuroverse.authapp.ui.forgot.ForgotPasswordViewModel
+import com.neuroverse.authapp.ui.home.HomeScreen
+import com.neuroverse.authapp.ui.home.HomeViewModel
 import com.neuroverse.authapp.ui.login.LoginScreen
 import com.neuroverse.authapp.ui.login.LoginViewModel
 import com.neuroverse.authapp.ui.register.RegisterScreen
@@ -83,16 +85,19 @@ fun AppNavGraph() {
             )
         }
         composable(Routes.HOME) {
-            StubScreen(
-                title = "Home",
-                actions = listOf(
-                    "Profile" to { navController.navigate(Routes.PROFILE) },
-                    "Logout (temporary)" to {
-                        navController.navigate(Routes.WELCOME) {
-                            popUpTo(Routes.HOME) { inclusive = true }
-                        }
+            val viewModel: HomeViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer { HomeViewModel(AppContainer.authRepository) }
+                }
+            )
+            HomeScreen(
+                viewModel = viewModel,
+                onOpenProfile = { navController.navigate(Routes.PROFILE) },
+                onLoggedOut = {
+                    navController.navigate(Routes.WELCOME) {
+                        popUpTo(Routes.HOME) { inclusive = true }
                     }
-                )
+                }
             )
         }
         composable(Routes.PROFILE) {
