@@ -20,3 +20,6 @@ local.properties
 # Signing keys
 *.jks
 *.keystore
+
+# IDE settings
+.idea/
