@@ -33,6 +33,7 @@ class FirebaseAuthRepository(
             } catch (e: Exception) {
                 // Account exists; name update failed. Still treat as success.
             }
+            android.util.Log.w("AuthDebug", "registered uid=${fbUser.uid} email=${fbUser.email}")
             AuthResult.Success(User(fbUser.uid, cleanName, fbUser.email ?: cleanEmail))
         } catch (e: CancellationException) {
             throw e
@@ -49,6 +50,7 @@ class FirebaseAuthRepository(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            android.util.Log.w("AuthDebug", "login failed: ${e.javaClass.simpleName}: ${e.message}")
             AuthResult.Failure(mapError(e))
         }
     }
@@ -67,7 +69,11 @@ class FirebaseAuthRepository(
         }
     }
 
-    override suspend fun currentUser(): User? = auth.currentUser?.toUser()
+    override suspend fun currentUser(): User? {
+        val user = auth.currentUser
+        android.util.Log.w("AuthDebug", "currentUser = ${user?.uid} ${user?.email}")
+        return user?.toUser()
+    }
 
     override suspend fun logout() {
         auth.signOut()
